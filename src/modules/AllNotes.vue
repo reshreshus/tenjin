@@ -9,49 +9,26 @@
     </div>
     <!-- Rems -->
     <div class="mt-10">
-      <div v-for="(rem, idx) in currentRems" :key="idx" class="relative">
-        <div class="absolute -left-4 top-4 w-2 h-2 bg-black rounded-full" />
-        <div
-          class="text-xl p-2"
-          :class="{'bg-gray': rem.selected }"
-          @click="rem.selected = !rem.selected"
-        >
-          {{ rem.text }}
-        </div>
-      </div>
+      <Suspense>
+        <rem-view />
+        <template #fallback>
+          <div class="h-full text-center flex items-center">
+            Loading
+          </div>
+        </template>
+      </Suspense>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        rems: [
-          {
-            text: 'VimNote',
-            selected: true,
-            archived: false,
-          },
-          {
-            text: 'With macros and shit',
-            selected: false,
-            archived: false,
-          },
-          {
-            text: 'This is archived',
-            selected: false,
-            archived: true,
-          }
-        ]
-      }
-    },
-    computed: {
-      currentRems() {
-        return this.rems.filter(r => !r.archived)
-      }
-    },
-  }
+import RemView from '@/modules/RemView'
+
+export default {
+  components: {
+    RemView,
+  },
+}
 </script>
 
 <style lang="sass" scoped>
