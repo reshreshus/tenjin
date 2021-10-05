@@ -1,14 +1,16 @@
 <template>
-  <div class="home text-center text-xl">
-    Hello there
+  <div class="">
+    <all-notes />
   </div>
 </template>
 
 <script>
+import AllNotes from '@/modules/AllNotes'
 
 export default {
   name: "Home",
   components: {
+    AllNotes
   },
 };
 </script>
