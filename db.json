@@ -1,0 +1,31 @@
+{
+  "rems": [
+    {
+      "id": 1,
+      "text": "VimNote",
+      "selected": false,
+      "archived": false,
+      "body": "# Hello world, it's Tenjin  this is markdown, right?",
+      "children": [
+        {
+          "id": 4,
+          "text": "This is a child",
+          "selected": false
+        }
+      ],
+      "opened": true
+    },
+    {
+      "id": 2,
+      "text": "With macros and shit",
+      "selected": false,
+      "archived": false
+    },
+    {
+      "id": 3,
+      "text": "This is archivld",
+      "selected": false,
+      "archived": true
+    }
+  ]
+}
