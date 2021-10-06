@@ -13,7 +13,6 @@
         <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" />
       </div>
     </div>
-    <!-- <modal-view v-if="openedRem" /> -->
   </div>
 </template>
 
@@ -21,11 +20,9 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { micromark } from 'micromark'
-// import ModalView from '@/components/ModalView'
 
 export default {
   components: {
-    // ModalView,
   },
   async setup() {
     const { data: rems } = await axios.get('http://localhost:3000/rems')

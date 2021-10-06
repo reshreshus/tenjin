@@ -1,12 +1,32 @@
 <template>
-  <div class="modal fixed bg-white dark:bg-deepblue-lighter shadow-2xl rounded z-10">
+  <div class="modal w-20 h-20 fixed bg-gray dark:bg-deepblue-lighter shadow-2xl rounded z-10">
     <slot />
+    <button class="" @click="emit('closeModal')">
+      Close
+    </button>
   </div>
 </template>
 
 <script>
+import { onBeforeUnmount } from '@vue/runtime-core'
+
   export default {
-    
+    setup(props, { emit }) {
+      const onKeydown = (event) => {
+        console.log(event.key)
+        if (event.key === 'Escape') {
+          emit('closeModal')
+        }
+      }
+      window.addEventListener('keydown', onKeydown)
+
+      onBeforeUnmount(() => {
+        window.removeEventListener('keydown', onKeydown)
+      })
+      return {
+        emit
+      }
+    }
   }
 </script>
 
