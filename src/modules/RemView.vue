@@ -1,18 +1,21 @@
 <template>
-  <div>
-    <div v-for="(rem, idx) in currentRems" :key="idx" class="relative">
-      <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
-        <div class="w-2 h-2 bg-black rounded-full" />
-      </div>
-      <div
-        class="text-xl p-2 h-[2.75rem]"
-        :class="{'bg-gray': isHighlighted(idx) }"
-        @click="selectRem(idx)"
-      >
-        {{ rem.text }}
-        <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" />
+  <div class="flex">
+    <div class="w-[600px] border-r">
+      <div v-for="(rem, idx) in rems" :key="idx" class="relative">
+        <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
+          <div class="w-2 h-2 bg-black rounded-full" />
+        </div>
+        <div
+          class="text-xl p-2 min-h-[2.75rem]"
+          :class="{'bg-gray': isHighlighted(idx) }"
+          @click="selectRem(idx)"
+        >
+          {{ rem.text }}
+          <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" />
+        </div>
       </div>
     </div>
+    <doc-view :rem="currentRem" />
   </div>
 </template>
 
@@ -22,9 +25,11 @@ import axios from 'axios'
 import { micromark } from 'micromark'
 import useKeydown from '@/composables/keydown'
 import { v4 } from 'uuid'
+import DocView from '@/modules/DocView'
 
 export default {
   components: {
+    DocView
   },
   async setup() {
     const { data: rems } = await axios.get('http://localhost:3000/rems')
@@ -66,8 +71,11 @@ export default {
     ])
   },
   computed: {
-    currentRems() {
-      return this.rems.filter(r => !r.archived)
+    // currentRems() {
+    //   return this.rems.filter(r => !r.archived)
+    // },
+    currentRem() {
+      return this.rems[this.cursorLine]
     }
   },
   methods: {

@@ -9,7 +9,7 @@ const useKeydown = (keyCombos) => {
     }
     // e.preventDefault()
     // e.stopPropagation()
-    console.log(e)
+    // console.log(e)
   }
   window.addEventListener('keypress', onKeydown)
 
