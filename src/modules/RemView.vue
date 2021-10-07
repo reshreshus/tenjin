@@ -7,15 +7,20 @@
         </div>
         <div
           class="text-xl p-2 min-h-[2.75rem]"
-          :class="{'bg-gray': isHighlighted(idx) }"
+          :class="{
+            'bg-gray': isHighlighted(idx),
+            'line-through': rem.archived,
+          }"
           @click="selectRem(idx)"
         >
+            <!-- 'text-white': rem.archived && idx === cursorLine, -->
+
           {{ rem.text }}
           <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" />
         </div>
       </div>
     </div>
-    <doc-view :rem="currentRem" class="ml-2" />
+    <doc-view :rem="currentRem" @change-rem="changeRem" class="ml-2" />
   </div>
 </template>
 
@@ -95,6 +100,10 @@ export default {
     openRem(rem) {
       rem.opened = !rem.opened
     },
+    switchRemArchived(rem) {
+      rem.archived = !rem.archived
+      this.updateRem(rem)
+    },
     updateRem(rem) {
       axios.put(`http://localhost:3000/rems/${rem.id}`, rem)
     },
@@ -106,6 +115,9 @@ export default {
       this.rems.push(rem)
       axios.post(`http://localhost:3000/rems/`, rem)
     },
+    removeCurrentRem() {
+      this.removeRem(this.rems[this.cursorLine])
+    },
     removeRem(rem) {
       if (this.cursorLine === this.rems.length - 1) {
         this.moveUp()
@@ -115,6 +127,17 @@ export default {
     },
     isHighlighted(idx) {
       return idx === this.cursorLine || this.selectedLines.includes(idx)
+    },
+    changeRem( { archive, remove }) {
+      const rem = this.currentRem
+      if (archive) {
+        this.switchRemArchived(rem)
+        this.updateRem(rem)
+      }
+      if (remove) {
+        this.removeRem(rem)
+      }
+      // save
     },
     micromark
   },
