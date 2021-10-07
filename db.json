@@ -3,7 +3,7 @@
     {
       "id": 1,
       "text": "VimNote",
-      "selected": false,
+      "selected": true,
       "archived": false,
       "body": "# Hello world, it's Tenjin  this is markdown, right?",
       "children": [
@@ -13,7 +13,7 @@
           "selected": false
         }
       ],
-      "opened": true
+      "opened": false
     },
     {
       "id": 2,

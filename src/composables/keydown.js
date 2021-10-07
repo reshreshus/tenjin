@@ -11,7 +11,7 @@ const useKeydown = (keyCombos) => {
     // e.stopPropagation()
     // console.log(e)
   }
-  window.addEventListener('keydown', onKeydown)
+  window.addEventListener('keypress', onKeydown)
 
   onBeforeUnmount(() => {
     window.removeEventListener('keydown', onKeydown)

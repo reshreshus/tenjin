@@ -1,12 +1,12 @@
 <template>
   <div>
     <div v-for="(rem, idx) in currentRems" :key="idx" class="relative">
-      <div class="absolute -left-4 top-4 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
+      <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
         <div class="w-2 h-2 bg-black rounded-full" />
       </div>
       <div
         class="text-xl p-2"
-        :class="{'bg-gray': rem.selected }"
+        :class="{'bg-gray': isHighlighted(idx) }"
         @click="selectRem(rem)"
       >
         {{ rem.text }}
@@ -20,6 +20,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { micromark } from 'micromark'
+import useKeydown from '@/composables/keydown'
 
 export default {
   components: {
@@ -29,6 +30,37 @@ export default {
     return {
       rems: ref(rems)
     }
+  },
+  data() {
+    return {
+      selectedLines: [
+      ],
+      cursorLine: 0
+    }
+  },
+  created () {
+    useKeydown([
+      {
+        key: 'j',
+        fn: () => {
+          this.cursorLine = Math.min(this.rems.length - 2, this.cursorLine + 1)
+        }
+      },
+      {
+        key: 'k',
+        fn: () => {
+          this.cursorLine = Math.max(0, this.cursorLine - 1)
+        }
+      },
+      {
+        key: 'z',
+        fn: () => {
+          const currentRem = this.rems[this.cursorLine]
+          currentRem.opened = !currentRem.opened
+          this.updateRem(currentRem)
+        }
+      }
+    ])
   },
   computed: {
     currentRems() {
@@ -45,6 +77,9 @@ export default {
     },
     updateRem(rem) {
       axios.put(`http://localhost:3000/rems/${rem.id}`, rem)
+    },
+    isHighlighted(idx) {
+      return idx === this.cursorLine || this.selectedLines.includes(idx)
     },
     micromark
   },
