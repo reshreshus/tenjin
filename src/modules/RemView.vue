@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <div class="w-[600px] border-r">
+    <div class="w-[500px] border-r">
       <div v-for="(rem, idx) in rems" :key="idx" class="relative">
         <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <doc-view :rem="currentRem" />
+    <doc-view :rem="currentRem" class="ml-2" />
   </div>
 </template>
 

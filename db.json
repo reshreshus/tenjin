@@ -5,7 +5,7 @@
       "text": "VimNote",
       "selected": true,
       "archived": false,
-      "body": "# Hello world, it's Tenjin  this is markdown, right?",
+      "body": "# Hello world, it's Tenjin \n  this is markdown, right?",
       "children": [
         {
           "id": 4,
@@ -20,6 +20,18 @@
       "text": "With macros and shit",
       "selected": false,
       "archived": false
+    },
+    {
+      "id": "56242f78-29f4-4d22-98df-3762bb5f4df3",
+      "text": ""
+    },
+    {
+      "id": "29c5c829-f7f5-46b8-b5a4-ffa3cda382d7",
+      "text": ""
+    },
+    {
+      "id": "5c8afde0-3b33-43d4-8296-7bc65756d33d",
+      "text": ""
     }
   ]
 }
