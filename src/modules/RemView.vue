@@ -28,19 +28,19 @@
 
 <script>
 import { ref } from 'vue'
-import axios from 'axios'
 import { micromark } from 'micromark'
 import useKeydown from '@/composables/keydown'
 import { v4 } from 'uuid'
 import DocView from '@/modules/DocView'
 import useRemSelection from '@/composables/rem-selection.js'
+import remsService from '@/services/remsService.js'
 
 export default {
   components: {
     DocView
   },
   async setup() {
-    const { data: rems } = await axios.get('http://localhost:3000/rems')
+    const { data: rems } = await remsService.getRems()
     return {
       rems: ref(rems),
       remSelection: useRemSelection()
@@ -110,7 +110,7 @@ export default {
       this.updateRem(rem)
     },
     updateRem(rem) {
-      axios.put(`http://localhost:3000/rems/${rem.id}`, rem)
+      remsService.updateRem(rem)
     },
     async newRem() {
       const rem = {
@@ -118,7 +118,7 @@ export default {
         text: ''
       }
       this.rems.push(rem)
-      axios.post(`http://localhost:3000/rems/`, rem)
+      remsService.addRem(rem)
     },
     removeCurrentRem() {
       this.removeRem(this.rems[this.cursorLine])
@@ -128,7 +128,7 @@ export default {
         this.moveUp()
       }
       this.rems = this.rems.filter(r => r.id != rem.id)
-      axios.delete(`http://localhost:3000/rems/${rem.id}`)
+      remsService.deleteRem(rem)
     },
     isCurrent(idx) {
       return idx === this.cursorLine

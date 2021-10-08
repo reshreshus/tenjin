@@ -7,13 +7,13 @@
       <button @click="modalOpen = true" class="ml-1 p-1 bg-gray rounded">
         Info
       </button>
-
-      <div class="ml-4 text-xl ">
-        Selected <span class="text-blue">{{ remSelection.rems.size }}</span> rems
-      </div>
     </div>
     <!-- Header -->
-    <div class="">
+    <div class="mt-4 flex items-center">
+      <input type="checkbox" @click="selectAll" />
+      <div class="ml-4 text-xl ">
+        Selected <span class="text-blue">{{ remsSelectedSize }}</span> rems
+      </div>
     </div>
     <!-- Rems -->
     <div class="mt-10">
@@ -34,16 +34,26 @@
 import ModalView from '@/components/ModalView'
 import RemView from '@/modules/RemView'
 import useRemSelection from '@/composables/rem-selection.js'
+import { computed } from 'vue'
 
 export default {
   components: {
     RemView,
     ModalView,
   },
+  setup() {
+    const remSelection = useRemSelection()
+    const remsSelectedSize = computed(() => remSelection.rems.size )
+    const allRemsSelected = remsSelectedSize.value
+    return {
+      remSelection,
+      remsSelectedSize,
+      allRemsSelected
+    }
+  },
   data() {
     return {
       modalOpen: false,
-      remSelection: useRemSelection()
     }
   },
 }
