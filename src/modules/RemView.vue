@@ -1,6 +1,7 @@
 <template>
   <div class="flex">
     <div class="w-[500px] border-r">
+      <!-- {{ remSelection.rems }} -->
       <div v-for="(rem, idx) in rems" :key="idx" class="relative">
         <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
@@ -8,10 +9,11 @@
         <div
           class="text-xl p-2 min-h-[2.75rem]"
           :class="{
-            'bg-gray': isHighlighted(idx),
+            'bg-gray': isSelected(rem),
+            'bg-airblue': isCurrent(idx),
             'line-through': rem.archived,
           }"
-          @click="selectRem(idx)"
+          @click="selectRem(rem)"
         >
             <!-- 'text-white': rem.archived && idx === cursorLine, -->
 
@@ -25,7 +27,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import axios from 'axios'
 import { micromark } from 'micromark'
 import useKeydown from '@/composables/keydown'
@@ -38,8 +40,20 @@ export default {
   },
   async setup() {
     const { data: rems } = await axios.get('http://localhost:3000/rems')
+    const selected = reactive(new Set())
+    const remSelection = {
+      rems: selected,
+      toggle(rem) {
+        if (selected.has(rem)) {
+          selected.delete(rem)
+        } else {
+          selected.add(rem)
+        }
+      }
+    }
     return {
-      rems: ref(rems)
+      rems: ref(rems),
+      remSelection
     }
   },
   data() {
@@ -94,8 +108,9 @@ export default {
       // this.cursorLine = Math.min(this.rems.length - 2, this.cursorLine + 1)
       this.cursorLine += 1
     },
-    selectRem(idx) {
-      this.cursorLine = idx
+    selectRem(rem) {
+      // this.cursorLine = idx
+      this.remSelection.toggle(rem)
     },
     openRem(rem) {
       rem.opened = !rem.opened
@@ -125,8 +140,11 @@ export default {
       this.rems = this.rems.filter(r => r.id != rem.id)
       axios.delete(`http://localhost:3000/rems/${rem.id}`)
     },
-    isHighlighted(idx) {
-      return idx === this.cursorLine || this.selectedLines.includes(idx)
+    isCurrent(idx) {
+      return idx === this.cursorLine
+    },
+    isSelected(rem) {
+      return this.remSelection.rems.has(rem)
     },
     changeRem( { archive, remove }) {
       const rem = this.currentRem
