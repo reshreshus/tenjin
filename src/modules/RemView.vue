@@ -27,12 +27,13 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import { micromark } from 'micromark'
 import useKeydown from '@/composables/keydown'
 import { v4 } from 'uuid'
 import DocView from '@/modules/DocView'
+import useRemSelection from '@/composables/rem-selection.js'
 
 export default {
   components: {
@@ -40,20 +41,9 @@ export default {
   },
   async setup() {
     const { data: rems } = await axios.get('http://localhost:3000/rems')
-    const selected = reactive(new Set())
-    const remSelection = {
-      rems: selected,
-      toggle(rem) {
-        if (selected.has(rem)) {
-          selected.delete(rem)
-        } else {
-          selected.add(rem)
-        }
-      }
-    }
     return {
       rems: ref(rems),
-      remSelection
+      remSelection: useRemSelection()
     }
   },
   data() {

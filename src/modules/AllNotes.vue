@@ -7,6 +7,10 @@
       <button @click="modalOpen = true" class="ml-1 p-1 bg-gray rounded">
         Info
       </button>
+
+      <div class="ml-4 text-xl ">
+        Selected <span class="text-blue">{{ remSelection.rems.size }}</span> rems
+      </div>
     </div>
     <!-- Header -->
     <div class="">
@@ -29,6 +33,7 @@
 <script>
 import ModalView from '@/components/ModalView'
 import RemView from '@/modules/RemView'
+import useRemSelection from '@/composables/rem-selection.js'
 
 export default {
   components: {
@@ -37,7 +42,8 @@ export default {
   },
   data() {
     return {
-      modalOpen: false
+      modalOpen: false,
+      remSelection: useRemSelection()
     }
   },
 }
