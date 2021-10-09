@@ -27,22 +27,17 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import { micromark } from 'micromark'
 import useKeydown from '@/composables/keydown'
-import { v4 } from 'uuid'
 import DocView from '@/modules/DocView'
 import useRemSelection from '@/composables/rem-selection.js'
-import remsService from '@/services/remsService.js'
 
 export default {
   components: {
     DocView
   },
   async setup() {
-    const { data: rems } = await remsService.getRems()
     return {
-      rems: ref(rems),
       remSelection: useRemSelection()
     }
   },
@@ -53,7 +48,9 @@ export default {
       cursorLine: 0
     }
   },
-  created () {
+  async created () {
+    await this.$store.dispatch('fetchRems')
+
     useKeydown([
       {
         key: 'k',
@@ -80,11 +77,11 @@ export default {
     ])
   },
   computed: {
-    // currentRems() {
-    //   return this.rems.filter(r => !r.archived)
-    // },
     currentRem() {
       return this.rems[this.cursorLine]
+    },
+    rems() {
+      return this.$store.state.rems
     }
   },
   methods: {
@@ -106,19 +103,10 @@ export default {
       rem.opened = !rem.opened
     },
     switchRemArchived(rem) {
-      rem.archived = !rem.archived
-      this.updateRem(rem)
-    },
-    updateRem(rem) {
-      remsService.updateRem(rem)
+      this.$store.dispatch('switchRemArchived', rem)
     },
     async newRem() {
-      const rem = {
-        id: v4(),
-        text: ''
-      }
-      this.rems.push(rem)
-      remsService.addRem(rem)
+      this.$store.dispatch('newRem')
     },
     removeCurrentRem() {
       this.removeRem(this.rems[this.cursorLine])
@@ -127,8 +115,7 @@ export default {
       if (this.cursorLine === this.rems.length - 1) {
         this.moveUp()
       }
-      this.rems = this.rems.filter(r => r.id != rem.id)
-      remsService.deleteRem(rem)
+      this.$store.dispatch('removeRem', rem)
     },
     isCurrent(idx) {
       return idx === this.cursorLine

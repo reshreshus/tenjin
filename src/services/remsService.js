@@ -1,7 +1,7 @@
 import apiClient from '@/services'
 
 export default {
-  getRems() {
+  fetchRems() {
     return apiClient({
       method: 'get',
       url: '/rems'
