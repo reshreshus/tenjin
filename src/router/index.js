@@ -16,6 +16,13 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
+  {
+    path: "/error/:error",
+    name: "ErrorDisplay",
+    props: true,
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/ErrorDisplay.vue"),
+  }
 ];
 
 const router = createRouter({

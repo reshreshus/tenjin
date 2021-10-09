@@ -19,8 +19,12 @@ export default createStore({
   },
   actions: {
     async fetchRems({ commit }) {
-      const { data: rems } = await remsService.fetchRems()
-      commit('SAVE_REMS', rems)
+      try {
+        const { data: rems } = await remsService.fetchRems()
+        commit('SAVE_REMS', rems)
+      } catch (error) {
+        return Promise.reject(error)
+      }
     },
     switchRemArchived({ dispatch }, rem) {
       rem.archived = !rem.archived

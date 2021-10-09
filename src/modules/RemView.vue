@@ -49,7 +49,14 @@ export default {
     }
   },
   async created () {
-    await this.$store.dispatch('fetchRems')
+    try {
+      await this.$store.dispatch('fetchRems')
+    } catch (error) {
+      this.$router.push({
+        name:  'ErrorDisplay',
+        params: { error }
+      })
+    }
 
     useKeydown([
       {
