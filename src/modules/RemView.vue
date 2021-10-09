@@ -28,6 +28,7 @@
 
 <script>
 import { micromark } from 'micromark'
+import { mapState } from 'vuex'
 import useKeydown from '@/composables/keydown'
 import DocView from '@/modules/DocView'
 import useRemSelection from '@/composables/rem-selection.js'
@@ -87,9 +88,7 @@ export default {
     currentRem() {
       return this.rems[this.cursorLine]
     },
-    rems() {
-      return this.$store.state.rems
-    }
+    ...mapState(['rems'])
   },
   methods: {
     moveUp() {

@@ -10,7 +10,7 @@
     </div>
     <!-- Header -->
     <div class="mt-4 flex items-center">
-      <input type="checkbox" @click="selectAll" />
+      <input type="checkbox" :checked="allRemsSelected" @click="selectAllRems" />
       <div class="ml-4 text-xl ">
         Selected <span class="text-blue">{{ remsSelectedSize }}</span> rems
       </div>
@@ -35,6 +35,7 @@ import ModalView from '@/components/ModalView'
 import RemView from '@/modules/RemView'
 import useRemSelection from '@/composables/rem-selection.js'
 import { computed } from 'vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -44,16 +45,31 @@ export default {
   setup() {
     const remSelection = useRemSelection()
     const remsSelectedSize = computed(() => remSelection.rems.size )
-    const allRemsSelected = remsSelectedSize.value
     return {
       remSelection,
-      remsSelectedSize,
-      allRemsSelected
+      remsSelectedSize
     }
   },
   data() {
     return {
       modalOpen: false,
+    }
+  },
+  methods: {
+    selectAllRems() {
+      if (this.remsSelectedSize === this.rems.length) {
+        console.log('clear');
+        this.remSelection.clear()
+      } else {
+        this.remSelection.addMultiple(this.rems)
+      }
+    }
+  },
+
+  computed: {
+    ...mapState(['rems']),
+    allRemsSelected() {
+      return this.remsSelectedSize === this.rems.length
     }
   },
 }

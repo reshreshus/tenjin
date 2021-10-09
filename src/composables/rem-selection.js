@@ -11,6 +11,12 @@ export default function() {
       } else {
         rems.add(rem)
       }
+    },
+    clear() {
+      rems.clear()
+    },
+    addMultiple(newRems) {
+      newRems.forEach(r => rems.add(r))
     }
   }
 }
