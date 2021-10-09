@@ -14,6 +14,14 @@
       <div class="ml-4 text-xl ">
         Selected <span class="text-blue">{{ remsSelectedSize }}</span> rems
       </div>
+      <button
+        class="ml-1 p-1 bg-gray rounded"
+        :disabled="[...remSelection.rems].every(rem => rem.archived)"
+        :class="{'opacity-70 cursor-not-allowed': [...remSelection.rems].every(rem => rem.archived)}"
+        @click="archiveAll"
+      >
+         Archive
+      </button>
     </div>
     <!-- Rems -->
     <div class="mt-10">
@@ -63,6 +71,10 @@ export default {
       } else {
         this.remSelection.addMultiple(this.rems)
       }
+    },
+    archiveAll() {
+      console.log('archiveAll');
+      this.remSelection.archive()
     }
   },
 
