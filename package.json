@@ -5,10 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.4.1",
+    "@vue/test-utils": "^1.2.2",
     "axios": "^0.22.0",
     "core-js": "^3.6.5",
     "hotkeys-js": "^3.8.7",
@@ -36,6 +38,7 @@
     "prettier": "^2.2.1",
     "sass-loader": "^10.2.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "vue-jest": "^3.0.7",
     "vue-svg-loader": "^0.16.0"
   }
 }

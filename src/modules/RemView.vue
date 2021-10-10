@@ -2,8 +2,9 @@
   <div class="flex">
     <div class="w-[500px] border-r">
       <!-- {{ remSelection.rems }} -->
-      <div v-for="(rem, idx) in rems" :key="idx"
-       class="relative"
+      <div
+        v-for="(rem, idx) in rems" :key="idx"
+       class="rem relative"
        >
         <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
@@ -16,7 +17,7 @@
             'line-through': rem.archived,
           }"
           :id="`rem-${rem.id}`"
-          :contenteditable="isInsertMode"
+          :contenteditable="isInsertMode && isCurrent(idx)"
           @keydown="remKeydown"
         >
             <!-- 'text-white': rem.archived && idx === cursorLine, -->
