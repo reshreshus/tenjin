@@ -72,16 +72,8 @@ export default {
       //   this.updateRem(currentRem)
       // },
       d: this.deleteCurrentRem,
-      i: (e) => {
-        e.preventDefault()
-        this.setInsertMode()
-        const remEl = document.getElementById(`rem-${this.currentRem.id}`)
-        setTimeout(() => {
-          this.placeCaretAtEnd(remEl)
-        })
-        // const remEl = this.toggleEditingRem()
-        // document.execCommand('selectAll', false, null)
-      },
+      i: (el) => this.insertModeRem({ el, command: 'i'}),
+      a: (el) => this.insertModeRem({ el, command: 'a'}),
       space: this.selectCurrentRem,
       esc: (e) => {
         e.preventDefault()
@@ -102,9 +94,20 @@ export default {
     // remInput(e) {
     //   this.currentRem.text = e.target.innerText
     // },
+    insertModeRem({ el, command }) {
+      el.preventDefault()
+      this.setInsertMode()
+      const remEl = document.getElementById(`rem-${this.currentRem.id}`)
+      setTimeout(() => {
+        if (command === 'i') {
+          this.placeCaretAtStart(remEl)
+        } else {
+          this.placeCaretAtEnd(remEl)
+        }
+      })
+    },
     remKeydown(e) {
       if (this.isInsertMode) {
-        console.log();
         if (e.key === 'Escape' || e.key === 'Enter') {
           this.setNormalMode()
           const rem = {
@@ -117,24 +120,29 @@ export default {
         }
       }
     },
-    placeCaretAtEnd(el) {
+    placeCaret(el, atStart = false) {
       el.focus();
       if (typeof window.getSelection != "undefined"
               && typeof document.createRange != "undefined") {
           var range = document.createRange();
           range.selectNodeContents(el);
           // true to put the caret at start
-          range.collapse(false);
+          range.collapse(atStart);
           var sel = window.getSelection();
           sel.removeAllRanges();
           sel.addRange(range);
       } else if (typeof document.body.createTextRange != "undefined") {
           var textRange = document.body.createTextRange();
           textRange.moveToElementText(el);
-          // true to put the caret at start
-          textRange.collapse(false);
+          textRange.collapse(atStart);
           textRange.select();
       }
+    },
+    placeCaretAtEnd(el) {
+      this.placeCaret(el, false)
+    },
+    placeCaretAtStart(el) {
+      this.placeCaret(el, true)
     },
     setMode(mode) {
       this.$store.commit('SET_MODE', mode)
