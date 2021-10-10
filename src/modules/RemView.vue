@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="w-[500px] border-r">
       <!-- {{ remSelection.rems }} -->
-      <div v-for="(rem, idx) in rems" :key="idx" class="relative">
+      <div v-for="(rem, idx) in rems" :key="idx" :id="`rem-${rem.id}`" class="relative">
         <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
         </div>
@@ -59,30 +59,24 @@ export default {
       })
     }
 
-    useKeydown([
-      {
-        key: 'k',
-        fn: this.moveUp
+    useKeydown({
+      k: this.moveUp,
+      j: this.moveDown,
+      z: () => {
+        const currentRem = this.rems[this.cursorLine]
+        currentRem.opened = !currentRem.opened
+        this.updateRem(currentRem)
       },
-      {
-        key: 'j',
-        fn: this.moveDown
+      d: () => {
+        this.removeRem(this.rems[this.cursorLine])
       },
-      {
-        key: 'z',
-        fn: () => {
-          const currentRem = this.rems[this.cursorLine]
-          currentRem.opened = !currentRem.opened
-          this.updateRem(currentRem)
-        }
-      },
-      {
-        key: 'd',
-        fn: () => {
-          this.removeRem(this.rems[this.cursorLine])
-        }
+      i: () => {
+        const remEl = document.getElementById(`rem-${this.currentRem.id}`)
+        remEl.contentEditable = true
+        setTimeout(() => remEl.focus())
+        // document.execCommand('selectAll', false, null)
       }
-    ])
+    })
   },
   computed: {
     currentRem() {
