@@ -4,7 +4,8 @@ import { v4 } from 'uuid'
 
 export default createStore({
   state: {
-    rems: []
+    rems: [],
+    mode: 'normal'
   },
   mutations: {
     SAVE_REMS(state, rems) {
@@ -15,6 +16,9 @@ export default createStore({
     },
     REMOVE_REM(state, rem) {
       state.rems = state.rems.filter(r => r.id != rem.id)
+    },
+    SET_MODE(state, mode) {
+      state.mode = mode
     }
   },
   actions: {

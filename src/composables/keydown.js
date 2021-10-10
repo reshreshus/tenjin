@@ -18,7 +18,7 @@ const useKeydown = (keyCombos) => {
   // })
 
   hotkeys(Object.keys(keyCombos).join(), function(e, handler) {
-    console.log(handler.key)
+    // console.log(handler.key)
     const fn = keyCombos[handler.key]
     if (fn) {
       fn(e)
