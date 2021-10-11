@@ -15,15 +15,17 @@
             'bg-gray': isSelected(rem),
             'bg-airblue-light': isCurrent(idx),
             'line-through': rem.archived,
+            'cursor-pointer': isNormalMode
           }"
           :id="`rem-${rem.id}`"
           :contenteditable="isInsertMode && isCurrent(idx)"
           @keydown="remKeydown"
+          @click="setCurrentRemLine(idx)"
         >
             <!-- 'text-white': rem.archived && idx === cursorLine, -->
 
           {{ rem.text }}
-          <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" />
+          <!-- <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" /> -->
         </div>
       </div>
     </div>
@@ -89,6 +91,9 @@ export default {
     ...mapState(['rems', 'mode']),
     isInsertMode() {
       return this.mode === 'insert'
+    },
+    isNormalMode() {
+      return this.mode === 'normal'
     }
   },
   methods: {
@@ -181,6 +186,9 @@ export default {
     },
     saveCurrentRem() {
       this.updateRem(this.currentRem)
+    },
+    setCurrentRemLine(idx) {
+      this.cursorLine = idx
     },
     openRem(rem) {
       rem.opened = !rem.opened

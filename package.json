@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.4.1",
@@ -24,10 +24,12 @@
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/test-utils": "^2.0.0-0",
     "autoprefixer": "^9",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
@@ -38,7 +40,8 @@
     "prettier": "^2.2.1",
     "sass-loader": "^10.2.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "vue-jest": "^3.0.7",
+    "typescript": "~3.9.3",
+    "vue-jest": "^5.0.0-0",
     "vue-svg-loader": "^0.16.0"
   }
 }
