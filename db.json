@@ -5,6 +5,7 @@
       "text": "VimNote\n",
       "selected": true,
       "archived": false,
+      "data": {},
       "body": "# Hello world, it's Tenjin \n  this is markdown, right?",
       "children": [
         {
@@ -23,15 +24,8 @@
     },
     {
       "id": "e27e54e3-c5d1-4ac7-afeb-6afe16ff6a27",
-      "text": "Rasengan"
-    },
-    {
-      "id": "ccb5afbe-4e35-4ab9-87d8-b3cf416f58b1",
-      "text": ""
-    },
-    {
-      "id": "1398c00f-33ed-4ca9-a0a6-021ad8d359c5",
-      "text": ""
+      "text": "",
+      "archived": false
     }
   ]
 }
