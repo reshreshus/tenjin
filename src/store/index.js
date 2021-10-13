@@ -42,7 +42,7 @@ export default createStore({
       commit('ADD_NEW_REM', rem)
       remsService.addRem(rem)
     },
-    removeRem({ commit }, rem) {
+    deleteRem({ commit }, rem) {
       commit('REMOVE_REM', rem)
       remsService.deleteRem(rem)
     },

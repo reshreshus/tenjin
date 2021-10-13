@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-20 w-[1000px] mx-auto pl-5">
+  <div class="mt-20 w-[90%] mx-auto pl-5">
     <div class="flex items-end">
       <div class="text-5xl">
         All notes
@@ -8,25 +8,17 @@
         Info
       </button>
     </div>
-    <!-- Header -->
-    <div class="mt-4 flex items-center">
-      <input type="checkbox" :checked="allRemsSelected" @click="selectAllRems" />
-      <div class="ml-4 text-xl ">
-        Selected <span class="text-blue">{{ remsSelectedSize }}</span> rems
-      </div>
-      <button
-        class="ml-1 p-1 bg-gray rounded"
-        :disabled="[...remSelection.rems].every(rem => rem.archived)"
-        :class="{'opacity-70 cursor-not-allowed': [...remSelection.rems].every(rem => rem.archived)}"
-        @click="archiveAll"
-      >
-         Archive
-      </button>
-    </div>
+    <rems-view-header class="mt-4" />
     <!-- Rems -->
     <div class="mt-10">
       <Suspense>
-        <rem-view />
+        <template #default>
+          <div class="flex">
+            <!-- <pane class="w-[300px] border-r"/> -->
+            <pane active class="w-[500px] border-r"/>
+            <!-- <pane class="w-[800px]"/> -->
+          </div>
+        </template>
         <template #fallback>
           <div class="h-full text-center flex items-center">
             Loading
@@ -39,51 +31,26 @@
 </template>
 
 <script>
+import RemsViewHeader from '@/components/RemsViewHeader.vue'
 import ModalView from '@/components/ModalView'
-import RemView from '@/modules/RemView'
-import useRemSelection from '@/composables/rem-selection.js'
-import { computed } from 'vue'
+import Pane from '@/modules/Pane'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    RemView,
+    RemsViewHeader,
     ModalView,
-  },
-  setup() {
-    const remSelection = useRemSelection()
-    const remsSelectedSize = computed(() => remSelection.rems.size )
-    return {
-      remSelection,
-      remsSelectedSize
-    }
+    Pane,
   },
   data() {
     return {
       modalOpen: false,
     }
   },
-  methods: {
-    selectAllRems() {
-      if (this.remsSelectedSize === this.rems.length) {
-        console.log('clear');
-        this.remSelection.clear()
-      } else {
-        this.remSelection.addMultiple(this.rems)
-      }
-    },
-    archiveAll() {
-      console.log('archiveAll');
-      this.remSelection.archive()
-    }
-  },
 
   computed: {
     ...mapState(['rems']),
-    allRemsSelected() {
-      return this.remsSelectedSize === this.rems.length
-    }
-  },
+  }
 }
 </script>
 

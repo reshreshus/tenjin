@@ -1,12 +1,14 @@
 <template>
-  <div class="flex">
-    <div class="w-[500px] border-r">
+  <div class="flex w-full">
+    <div class="w-full">
       <!-- {{ remSelection.rems }} -->
+      <!-- {{ cursorLine }} <br>
+      {{ currentRem }} -->
       <div
         v-for="(rem, idx) in rems" :key="idx"
-       class="rem relative"
+       class="rem pl-6 relative"
        >
-        <div class="absolute -left-4 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
+        <div class="absolute left-2 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
         </div>
         <div
@@ -29,104 +31,127 @@
         </div>
       </div>
     </div>
-    <doc-view :rem="currentRem" @change-rem="changeRem" class="ml-2" />
+    <!-- <doc-view :rem="currentRem" @change-rem="changeRem" class="ml-2" /> -->
   </div>
 </template>
 
 <script>
 import { micromark } from 'micromark'
-import { mapState } from 'vuex'
+import { useStore } from 'vuex'
 import useKeydown from '@/composables/keydown'
-import DocView from '@/modules/DocView'
+// import DocView from '@/modules/DocView'
 import useRemSelection from '@/composables/rem-selection.js'
+import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue'
 
 export default {
   components: {
-    DocView
+    // DocView
   },
   async setup() {
-    return {
-      remSelection: useRemSelection()
-    }
-  },
-  data() {
-    return {
-      selectedLines: [
-      ],
-      cursorLine: 0,
-    }
-  },
-  async created () {
+
+    const cursorLine = ref(0)
+    const selectedLines = ref([])
+
+    const store = useStore()
+    const router = useRouter()
+
     try {
-      await this.$store.dispatch('fetchRems')
+      await store.dispatch('fetchRems')
     } catch (error) {
-      this.$router.push({
+      router.push({
         name:  'ErrorDisplay',
         params: { error }
       })
     }
 
-    useKeydown({
-      k: this.moveUp,
-      j: this.moveDown,
-      // z: () => {
-      //   const currentRem = this.rems[this.cursorLine]
-      //   currentRem.opened = !currentRem.opened
-      //   this.updateRem(currentRem)
-      // },
-      d: this.deleteCurrentRem,
-      i: (el) => this.insertModeRem({ el, command: 'i'}),
-      a: (el) => this.insertModeRem({ el, command: 'a'}),
-      space: this.selectCurrentRem,
-      esc: (e) => {
-        e.preventDefault()
-        this.setNormalMode
-      },
+    const rems = computed(() => store.state.rems)
+    const mode = computed(() => store.state.mode)
+
+    const isInsertMode = computed(() => {
+      return mode.value === 'insert'
     })
-  },
-  computed: {
-    currentRem() {
-      return this.rems[this.cursorLine]
-    },
-    ...mapState(['rems', 'mode']),
-    isInsertMode() {
-      return this.mode === 'insert'
-    },
-    isNormalMode() {
-      return this.mode === 'normal'
+    const isNormalMode = computed(() => {
+      return mode.value === 'normal'
+    })
+    const remSelection = useRemSelection()
+    const currentRem = computed(() => {
+      return rems.value[cursorLine.value]
+    })
+    console.log('rems', rems.value)
+    console.log('currentRem', currentRem.value)
+
+    const setMode = (mode) => {
+      store.commit('SET_MODE', mode)
     }
-  },
-  methods: {
-    // remInput(e) {
-    //   this.currentRem.text = e.target.innerText
-    // },
-    insertModeRem({ el, command }) {
-      el.preventDefault()
-      this.setInsertMode()
-      const remEl = document.getElementById(`rem-${this.currentRem.id}`)
-      setTimeout(() => {
-        if (command === 'i') {
-          this.placeCaretAtStart(remEl)
-        } else {
-          this.placeCaretAtEnd(remEl)
-        }
-      })
-    },
-    remKeydown(e) {
-      if (this.isInsertMode) {
-        if (e.key === 'Escape' || e.key === 'Enter') {
-          this.setNormalMode()
-          const rem = {
-            ...this.currentRem,
-            text: e.target.innerText
-          }
-          this.updateRem(rem)
-          e.preventDefault()
-          e.target.blur()
-        }
+    const setInsertMode = () => {
+      setMode('insert')
+    }
+    const setNormalMode = () => {
+      setMode('normal')
+    }
+    const moveUp = () => {
+      cursorLine.value = Math.max(0, cursorLine.value - 1)
+    }
+    const moveDown = async () => {
+      if (cursorLine.value === rems.value.length - 1) {
+        await newRem()
       }
-    },
-    placeCaret(el, atStart = false) {
+      // this.cursorLine = Math.min(this.rems.length - 2, this.cursorLine + 1)
+      cursorLine.value += 1
+    }
+    const selectRem = (rem) => {
+      remSelection.toggle(rem)
+    }
+    const selectCurrentRem = () => {
+      selectRem(currentRem.value)
+    }
+    const deleteCurrentRem = () => {
+      deleteRem(currentRem.value)
+    }
+    const saveCurrentRem = () => {
+      updateRem(currentRem.value)
+    }
+    const setCurrentRemLine = (idx) => {
+      cursorLine.value = idx
+    }
+    const openRem = (rem) => {
+      rem.opened = !rem.opened
+    }
+    const switchRemArchived = (rem) => {
+      store.dispatch('switchRemArchived', rem)
+    }
+    const newRem = async () => {
+      store.dispatch('newRem')
+    }
+    const deleteRem = (rem) => {
+      if (cursorLine.value === rems.value.length - 1) {
+        moveUp()
+      }
+      store.dispatch('deleteRem', rem)
+    }
+    const updateRem = (rem) => {
+      store.dispatch('updateRem', rem)
+    }
+    const isCurrent = (idx) => {
+      return idx === cursorLine.value
+    }
+    const isSelected = (rem) => {
+      return remSelection.rems.has(rem)
+    }
+    const changeRem = ({ archive, remove }) => {
+      const rem = currentRem.value
+      if (archive) {
+        switchRemArchived(rem)
+        updateRem(rem)
+      }
+      if (remove) {
+        deleteRem(rem)
+      }
+      // save
+    }
+
+    const placeCaret = (el, atStart = false) => {
       el.focus();
       if (typeof window.getSelection != "undefined"
               && typeof document.createRange != "undefined") {
@@ -143,90 +168,89 @@ export default {
           textRange.collapse(atStart);
           textRange.select();
       }
-    },
-    placeCaretAtEnd(el) {
-      this.placeCaret(el, false)
-    },
-    placeCaretAtStart(el) {
-      this.placeCaret(el, true)
-    },
-    setMode(mode) {
-      this.$store.commit('SET_MODE', mode)
-    },
-    setInsertMode() {
-      this.setMode('insert')
-    },
-    setNormalMode() {
-      this.setMode('normal')
-    },
-    // toggleEditingRem() {
-    //   const remEl = document.getElementById(`rem-${this.currentRem.id}`)
-    //   remEl.contentEditable = true
-    //   return remEl
-    // },
-    moveUp() {
-      this.cursorLine = Math.max(0, this.cursorLine - 1)
-    },
-    async moveDown() {
-      if (this.cursorLine === this.rems.length - 1) {
-        await this.newRem()
+    }
+    const placeCaretAtEnd = (el) => {
+      placeCaret(el, false)
+    }
+    const placeCaretAtStart = (el) => {
+      placeCaret(el, true)
+    }
+
+    const insertModeRem = ({ el, command }) => {
+      el.preventDefault()
+      setInsertMode()
+      const remEl = document.getElementById(`rem-${currentRem.value.id}`)
+      setTimeout(() => {
+        if (command === 'i') {
+          placeCaretAtStart(remEl)
+        } else {
+          placeCaretAtEnd(remEl)
+        }
+      })
+    }
+
+
+
+
+    useKeydown({
+      k: moveUp,
+      j: moveDown,
+      d: deleteCurrentRem,
+      i: (el) => insertModeRem({ el, command: 'i'}),
+      a: (el) => insertModeRem({ el, command: 'a'}),
+      space: selectCurrentRem,
+      esc: (e) => {
+        e.preventDefault()
+        setNormalMode()
+      },
+    })
+    return {
+      rems,
+      isInsertMode,
+      isNormalMode,
+      currentRem,
+
+      cursorLine,
+      selectedLines,
+      isCurrent,
+
+      remSelection,
+      isSelected,
+
+      moveUp,
+      moveDown,
+
+      selectRem,
+      selectCurrentRem,
+      deleteCurrentRem,
+      saveCurrentRem,
+      setCurrentRemLine,
+      openRem,
+      switchRemArchived,
+      newRem,
+      deleteRem,
+      updateRem,
+      changeRem,
+
+      
+      setNormalMode,
+      setInsertMode,
+    }
+  },
+  methods: {
+    remKeydown(e) {
+      if (this.isInsertMode) {
+        if (e.key === 'Escape' || e.key === 'Enter') {
+          this.setNormalMode()
+          const rem = {
+            ...this.currentRem,
+            text: e.target.innerText
+          }
+          this.updateRem(rem)
+          e.preventDefault()
+          e.target.blur()
+        }
       }
-      // this.cursorLine = Math.min(this.rems.length - 2, this.cursorLine + 1)
-      this.cursorLine += 1
-    },
-    selectRem(rem) {
-      // this.cursorLine = idx
-      this.remSelection.toggle(rem)
-    },
-    selectCurrentRem() {
-      this.selectRem(this.currentRem)
-    },
-    deleteCurrentRem() {
-      this.removeRem(this.currentRem)
-    },
-    saveCurrentRem() {
-      this.updateRem(this.currentRem)
-    },
-    setCurrentRemLine(idx) {
-      this.cursorLine = idx
-    },
-    openRem(rem) {
-      rem.opened = !rem.opened
-    },
-    switchRemArchived(rem) {
-      this.$store.dispatch('switchRemArchived', rem)
-    },
-    async newRem() {
-      this.$store.dispatch('newRem')
-    },
-    removeCurrentRem() {
-      this.removeRem(this.rems[this.cursorLine])
-    },
-    removeRem(rem) {
-      if (this.cursorLine === this.rems.length - 1) {
-        this.moveUp()
-      }
-      this.$store.dispatch('removeRem', rem)
-    },
-    updateRem(rem) {
-      this.$store.dispatch('updateRem', rem)
-    },
-    isCurrent(idx) {
-      return idx === this.cursorLine
-    },
-    isSelected(rem) {
-      return this.remSelection.rems.has(rem)
-    },
-    changeRem( { archive, remove }) {
-      const rem = this.currentRem
-      if (archive) {
-        this.switchRemArchived(rem)
-        this.updateRem(rem)
-      }
-      if (remove) {
-        this.removeRem(rem)
-      }
-      // save
     },
     micromark
   },

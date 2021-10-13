@@ -2,7 +2,7 @@
   "rems": [
     {
       "id": 1,
-      "text": "VimNote\n",
+      "text": "VimNote",
       "selected": true,
       "archived": false,
       "data": {},
@@ -23,9 +23,8 @@
       "archived": false
     },
     {
-      "id": "e27e54e3-c5d1-4ac7-afeb-6afe16ff6a27",
-      "text": "",
-      "archived": false
+      "id": "2512b114-698d-450a-b4a3-108a25e3626d",
+      "text": ""
     }
   ]
 }
