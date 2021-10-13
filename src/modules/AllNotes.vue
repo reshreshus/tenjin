@@ -35,12 +35,24 @@ import RemsViewHeader from '@/components/RemsViewHeader.vue'
 import ModalView from '@/components/ModalView'
 import Pane from '@/modules/Pane'
 import { mapState } from 'vuex'
+import { onErrorCaptured } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   components: {
     RemsViewHeader,
     ModalView,
     Pane,
+  },
+  setup() {
+    const router = useRouter()
+
+    onErrorCaptured((error) => {
+      router.push({
+        name:  'ErrorDisplay',
+        params: { error }
+      })
+    })
   },
   data() {
     return {

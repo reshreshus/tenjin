@@ -41,7 +41,6 @@ import { useStore } from 'vuex'
 import useKeydown from '@/composables/keydown'
 // import DocView from '@/modules/DocView'
 import useRemSelection from '@/composables/rem-selection.js'
-import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 
 export default {
@@ -54,16 +53,8 @@ export default {
     const selectedLines = ref([])
 
     const store = useStore()
-    const router = useRouter()
 
-    try {
-      await store.dispatch('fetchRems')
-    } catch (error) {
-      router.push({
-        name:  'ErrorDisplay',
-        params: { error }
-      })
-    }
+    await store.dispatch('fetchRems')
 
     const rems = computed(() => store.state.rems)
     const mode = computed(() => store.state.mode)
@@ -78,8 +69,6 @@ export default {
     const currentRem = computed(() => {
       return rems.value[cursorLine.value]
     })
-    console.log('rems', rems.value)
-    console.log('currentRem', currentRem.value)
 
     const setMode = (mode) => {
       store.commit('SET_MODE', mode)
