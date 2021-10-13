@@ -18,7 +18,7 @@
 <script>
 import { mapState } from 'vuex'
 import { computed } from 'vue'
-import useRemSelection from '@/composables/rem-selection.js'
+import useRemSelection from '@/use/rem-selection.js'
 
 export default {
   setup() {

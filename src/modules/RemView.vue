@@ -38,9 +38,9 @@
 <script>
 import { micromark } from 'micromark'
 import { useStore } from 'vuex'
-import useKeydown from '@/composables/keydown'
+import useKeydown from '@/use/keydown'
 // import DocView from '@/modules/DocView'
-import useRemSelection from '@/composables/rem-selection.js'
+import useRemSelection from '@/use/rem-selection.js'
 import { ref, computed } from 'vue'
 
 export default {
@@ -48,12 +48,10 @@ export default {
     // DocView
   },
   async setup() {
-
     const cursorLine = ref(0)
     const selectedLines = ref([])
 
     const store = useStore()
-
     await store.dispatch('fetchRems')
 
     const rems = computed(() => store.state.rems)

@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import UniqueID from '@/composables/UniqueID.js'
+import UniqueID from '@/use/UniqueID.js'
 
 export default {
   setup() {
