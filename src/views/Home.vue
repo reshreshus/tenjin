@@ -1,6 +1,11 @@
 <template>
   <div class="">
+    <Suspense>
     <all-notes />
+    <template #fallback>
+      loading
+    </template>
+    </Suspense>
   </div>
 </template>
 

@@ -4,9 +4,10 @@
       <!-- {{ remSelection.rems }} -->
       <!-- {{ cursorLine }} <br>
       {{ currentRem }} -->
+      <!-- {{ childrem }} -->
       <div
-        v-for="(rem, idx) in rems" :key="idx"
-       class="rem pl-6 relative"
+        v-for="(rem, idx) in childrem" :key="idx"
+        class="rem pl-6 relative"
        >
         <div class="absolute left-2 top-5 w-4 h-4 cursor-pointer" @click="openRem(rem)" >
           <div class="w-2 h-2 bg-black rounded-full" />
@@ -27,7 +28,6 @@
             <!-- 'text-white': rem.archived && idx === cursorLine, -->
 
           {{ rem.text }}
-          <!-- <div v-if="rem.opened && rem.body" v-html="micromark(rem.body)" class="prose" /> -->
         </div>
       </div>
     </div>
@@ -37,191 +37,22 @@
 
 <script>
 import { micromark } from 'micromark'
-import { useStore } from 'vuex'
-import useKeydown from '@/use/keydown'
-// import DocView from '@/modules/DocView'
-import useRemSelection from '@/use/rem-selection.js'
-import { ref, computed } from 'vue'
+import useRems from '@/use/rem'
 
 export default {
   components: {
     // DocView
   },
-  async setup() {
-    const cursorLine = ref(0)
-    const selectedLines = ref([])
-
-    const store = useStore()
-    await store.dispatch('fetchRems')
-
-    const rems = computed(() => store.state.rems)
-    const mode = computed(() => store.state.mode)
-
-    const isInsertMode = computed(() => {
-      return mode.value === 'insert'
-    })
-    const isNormalMode = computed(() => {
-      return mode.value === 'normal'
-    })
-    const remSelection = useRemSelection()
-    const currentRem = computed(() => {
-      return rems.value[cursorLine.value]
-    })
-
-    const setMode = (mode) => {
-      store.commit('SET_MODE', mode)
-    }
-    const setInsertMode = () => {
-      setMode('insert')
-    }
-    const setNormalMode = () => {
-      setMode('normal')
-    }
-    const moveUp = () => {
-      cursorLine.value = Math.max(0, cursorLine.value - 1)
-    }
-    const moveDown = async () => {
-      if (cursorLine.value === rems.value.length - 1) {
-        await newRem()
-      }
-      // this.cursorLine = Math.min(this.rems.length - 2, this.cursorLine + 1)
-      cursorLine.value += 1
-    }
-    const selectRem = (rem) => {
-      remSelection.toggle(rem)
-    }
-    const selectCurrentRem = () => {
-      selectRem(currentRem.value)
-    }
-    const deleteCurrentRem = () => {
-      deleteRem(currentRem.value)
-    }
-    const saveCurrentRem = () => {
-      updateRem(currentRem.value)
-    }
-    const setCurrentRemLine = (idx) => {
-      cursorLine.value = idx
-    }
-    const openRem = (rem) => {
-      rem.opened = !rem.opened
-    }
-    const switchRemArchived = (rem) => {
-      store.dispatch('switchRemArchived', rem)
-    }
-    const newRem = async () => {
-      store.dispatch('newRem')
-    }
-    const deleteRem = (rem) => {
-      if (cursorLine.value === rems.value.length - 1) {
-        moveUp()
-      }
-      store.dispatch('deleteRem', rem)
-    }
-    const updateRem = (rem) => {
-      store.dispatch('updateRem', rem)
-    }
-    const isCurrent = (idx) => {
-      return idx === cursorLine.value
-    }
-    const isSelected = (rem) => {
-      return remSelection.rems.has(rem)
-    }
-    const changeRem = ({ archive, remove }) => {
-      const rem = currentRem.value
-      if (archive) {
-        switchRemArchived(rem)
-        updateRem(rem)
-      }
-      if (remove) {
-        deleteRem(rem)
-      }
-      // save
-    }
-
-    const placeCaret = (el, atStart = false) => {
-      el.focus();
-      if (typeof window.getSelection != "undefined"
-              && typeof document.createRange != "undefined") {
-          var range = document.createRange();
-          range.selectNodeContents(el);
-          // true to put the caret at start
-          range.collapse(atStart);
-          var sel = window.getSelection();
-          sel.removeAllRanges();
-          sel.addRange(range);
-      } else if (typeof document.body.createTextRange != "undefined") {
-          var textRange = document.body.createTextRange();
-          textRange.moveToElementText(el);
-          textRange.collapse(atStart);
-          textRange.select();
-      }
-    }
-    const placeCaretAtEnd = (el) => {
-      placeCaret(el, false)
-    }
-    const placeCaretAtStart = (el) => {
-      placeCaret(el, true)
-    }
-
-    const insertModeRem = ({ el, command }) => {
-      el.preventDefault()
-      setInsertMode()
-      const remEl = document.getElementById(`rem-${currentRem.value.id}`)
-      setTimeout(() => {
-        if (command === 'i') {
-          placeCaretAtStart(remEl)
-        } else {
-          placeCaretAtEnd(remEl)
-        }
-      })
-    }
-
-
-
-
-    useKeydown({
-      k: moveUp,
-      j: moveDown,
-      d: deleteCurrentRem,
-      i: (el) => insertModeRem({ el, command: 'i'}),
-      a: (el) => insertModeRem({ el, command: 'a'}),
-      space: selectCurrentRem,
-      esc: (e) => {
-        e.preventDefault()
-        setNormalMode()
-      },
-    })
+  props: {
+    remId: {
+      type: [String, Number],
+      required: true
+    },
+  },
+  async setup(props) {
+    const remsControl = useRems(props.remId)
     return {
-      rems,
-      isInsertMode,
-      isNormalMode,
-      currentRem,
-
-      cursorLine,
-      selectedLines,
-      isCurrent,
-
-      remSelection,
-      isSelected,
-
-      moveUp,
-      moveDown,
-
-      selectRem,
-      selectCurrentRem,
-      deleteCurrentRem,
-      saveCurrentRem,
-      setCurrentRemLine,
-      openRem,
-      switchRemArchived,
-      newRem,
-      deleteRem,
-      updateRem,
-      changeRem,
-
-      
-      setNormalMode,
-      setInsertMode,
+      ...remsControl
     }
   },
   methods: {

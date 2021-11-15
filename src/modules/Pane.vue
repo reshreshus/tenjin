@@ -1,6 +1,6 @@
 <template>
   <div>
-    <rem-view />
+    <rem-view :rem-id="remId" />
   </div>
 </template>
 
@@ -8,11 +8,16 @@
 import RemView from '@/modules/RemView'
 
 export default {
+  props: {
+    remId: {
+      type: [String, Number],
+      required: true
+    },
+  },
   components: {
     RemView,
   },
   setup () {
-
     return {}
   }
 }
