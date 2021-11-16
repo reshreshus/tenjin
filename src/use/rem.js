@@ -1,30 +1,41 @@
-import useKeydown from '@/use/keydown'
 import { computed, ref } from 'vue'
+// import { reactive } from 'vue'
 import useRemSelection from '@/use/rem-selection'
 import { placeCaretAtEnd, placeCaretAtStart } from '@/helpers/rem-place-caret'
 import useRems from '@/use/rem-store.js'
 
 
-  export default function(remId) {
-    console.log('useRem')
+  export default async function(remId) {
+    console.log('useRem', remId)
 
-    const remStore = useRems()
+    const remStore = await useRems()
+    // console.log('rem store', remStore)
 
-    const rems = computed(() => remStore.rems)
-    const mode = computed(() => remStore.mode)
+    // const rems = computed(() => remStore.rems)
+    const { rems, mode } = remStore
 
-    const cursorLine = ref(0)
-    const selectedLines = ref([])
+    let cursorLine
+    let selectedLines
+
+
+    let childrem
+    let superRem
+    // console.log(rems.value)
+    const init = (id) => {
+      superRem = computed(() => rems.value.find(r => r.id === id))
+      if (superRem.value.children) {
+        childrem = computed(() => rems.value.filter(r => superRem.value.children.includes(r.id)))
+      } else {
+        childrem = computed(() => [])
+      }
+      cursorLine = ref(0)
+      selectedLines = ref([])
+      // console.log('init', superRem.value, childrem.value)
+    }
+    init(remId)
 
     const isCurrent = (idx) => {
       return idx === cursorLine.value
-    }
-
-    let childrem
-    // TODO
-    if (remId === -1) {
-      // childrem = computed(() => rems.value.filter(r => !r.parentId))
-      childrem = rems.value
     }
 
     const isInsertMode = computed(() => {
@@ -81,13 +92,14 @@ import useRems from '@/use/rem-store.js'
       remStore.updateRem(rem)
     }
     const newRem = async () => {
-      remStore.newRem()
+      console.log('new rem')
+      remStore.newRem(superRem.value)
     }
     const deleteRem = (rem) => {
       if (cursorLine.value === childrem.value.length - 1) {
         moveUp()
       }
-      remStore.deleteRem(rem)
+      remStore.deleteRem(rem, superRem.value)
     }
 
     const isSelected = (rem) => {
@@ -119,20 +131,9 @@ import useRems from '@/use/rem-store.js'
       })
     }
 
-    useKeydown({
-      k: moveUp,
-      j: moveDown,
-      d: deleteCurrentRem,
-      i: (el) => insertModeRem({ el, command: 'i'}),
-      a: (el) => insertModeRem({ el, command: 'a'}),
-      space: selectCurrentRem,
-      esc: (e) => {
-        e.preventDefault()
-        setNormalMode()
-      },
-    })
-
     return {
+      init,
+
       childrem,
       isInsertMode,
       isNormalMode,
@@ -160,5 +161,6 @@ import useRems from '@/use/rem-store.js'
 
       setNormalMode,
       setInsertMode,
+      insertModeRem
     }
 }

@@ -2,8 +2,8 @@
   <div class="flex w-full">
     <div class="w-full">
       <!-- {{ remSelection.rems }} -->
-      <!-- {{ cursorLine }} <br>
-      {{ currentRem }} -->
+      <!-- {{ cursorLine }} <br> -->
+      <!-- {{ currentRem }} -->
       <!-- {{ childrem }} -->
       <div
         v-for="(rem, idx) in childrem" :key="idx"
@@ -37,22 +37,29 @@
 
 <script>
 import { micromark } from 'micromark'
-import useRems from '@/use/rem'
+// import useRems from '@/use/rem'
 
 export default {
   components: {
     // DocView
   },
   props: {
-    remId: {
-      type: [String, Number],
+    // remId: {
+    //   type: [String, Number],
+    //   required: true
+    // },
+    remControl: {
+      type: Object,
       required: true
-    },
+    }
   },
   async setup(props) {
-    const remsControl = useRems(props.remId)
+    // const remsControl = useRems(props.remId)
+    // return {
+    //   ...remsControl
+    // }
     return {
-      ...remsControl
+      ...props.remControl
     }
   },
   methods: {

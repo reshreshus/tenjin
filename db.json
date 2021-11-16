@@ -1,29 +1,51 @@
 {
   "rems": [
     {
-      "id": 1,
+      "id": "-1",
+      "children": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    {
+      "id": "1",
       "text": "VimNote",
       "selected": true,
       "archived": false,
       "data": {},
       "body": "# Hello world, it's Tenjin \n  this is markdown, right?",
       "children": [
-        {
-          "id": 4,
-          "text": "This is a child",
-          "selected": false
-        }
+        "4",
+        "8aa3d01e-a1a4-49fd-a012-840b689136a1"
       ],
       "opened": false
     },
     {
-      "id": 2,
+      "id": "4",
+      "text": "This is a child",
+      "selected": false,
+      "children": [
+        "3bdc27d8-0e5e-4fa9-8e99-f1e8727cb556",
+        "abeea0f3-73c6-4d5a-a421-8c0ef86694c3"
+      ]
+    },
+    {
+      "id": "2",
       "text": "With macros and shit",
       "selected": false,
       "archived": false
     },
     {
-      "id": "16d7c9e2-be1f-4aa1-a40a-35348330f216",
+      "id": "3",
+      "text": ""
+    },
+    {
+      "id": "3bdc27d8-0e5e-4fa9-8e99-f1e8727cb556",
+      "text": ""
+    },
+    {
+      "id": "abeea0f3-73c6-4d5a-a421-8c0ef86694c3",
       "text": ""
     }
   ]
